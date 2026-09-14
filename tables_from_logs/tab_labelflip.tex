@@ -1,0 +1,18 @@
+\begin{table}[H]
+	\caption{Accuracy (\%) under label flipping, mean $\pm$ across-seed sample standard deviation over three seeds. Best per column in \textbf{bold}.}
+	\label{tab:labelflip}
+	\centering
+	\begin{tabular}{@{}lccc@{}}
+		\toprule
+		\textbf{Method} & $\rho=0.10$ & $\rho=0.20$ & $\rho=0.30$\\
+		\midrule
+		FedAvg~\cite{mcmahan2017communication} & $\mathbf{94.3}\pm0.9$ & $89.3\pm0.9$ & $73.8\pm1.0$\\
+		Trimmed Mean~\cite{yin2018byzantine} & $92.1\pm1.5$ & $91.4\pm1.3$ & $83.0\pm0.8$\\
+		Krum~\cite{blanchard2017byzantine} & $89.7\pm0.8$ & $89.5\pm1.2$ & $87.3\pm4.0$\\
+		FLTrust~\cite{cao2021fltrust} & $77.4\pm1.8$ & $74.6\pm1.2$ & $72.1\pm1.3$\\
+		FedDBC~\cite{feddbc2026} & $92.1\pm1.5$ & $85.6\pm6.6$ & $72.0\pm2.9$\\
+		AMFTA & $93.1\pm1.4$ & $\mathbf{92.8}\pm1.4$ & $80.3\pm11.8$\\
+		\textbf{AMFTA-ND} & $92.5\pm1.3$ & $92.3\pm1.8$ & $\mathbf{91.7}\pm1.2$\\
+		\bottomrule
+	\end{tabular}
+\end{table}

@@ -1,0 +1,18 @@
+\begin{table}[H]
+	\caption{F1 score at $\rho=0.30$, mean $\pm$ across-seed sample standard deviation over three seeds. Best per column in \textbf{bold}.}
+	\label{tab:f1}
+	\centering
+	\begin{tabular}{@{}lcc@{}}
+		\toprule
+		\textbf{Method} & \textbf{Label flipping} & \textbf{Gaussian noise}\\
+		\midrule
+		FedAvg & $0.784\pm0.016$ & $0.278\pm0.481$\\
+		Trimmed Mean & $0.874\pm0.007$ & $0.270\pm0.467$\\
+		Krum & $0.912\pm0.032$ & $0.935\pm0.002$\\
+		FLTrust & $0.796\pm0.015$ & $0.771\pm0.029$\\
+		FedDBC & $0.750\pm0.046$ & $0.681\pm0.197$\\
+		AMFTA & $0.841\pm0.113$ & $0.928\pm0.006$\\
+		\textbf{AMFTA-ND} & $\mathbf{0.943}\pm0.008$ & $\mathbf{0.937}\pm0.007$\\
+		\bottomrule
+	\end{tabular}
+\end{table}

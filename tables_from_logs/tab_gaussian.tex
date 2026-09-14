@@ -1,0 +1,18 @@
+\begin{table}[H]
+	\caption{Accuracy (\%) under Gaussian-noise model poisoning, mean $\pm$ across-seed sample standard deviation over three seeds.}
+	\label{tab:gaussian}
+	\centering
+	\begin{tabular}{@{}lccc@{}}
+		\toprule
+		\textbf{Method} & $\rho=0.10$ & $\rho=0.20$ & $\rho=0.30$\\
+		\midrule
+		FedAvg~\cite{mcmahan2017communication} & $71.3\pm2.2$ & $40.8\pm23.1$ & $42.8\pm26.7$\\
+		Trimmed Mean~\cite{yin2018byzantine} & $\mathbf{94.4}\pm1.0$ & $57.0\pm25.6$ & $41.5\pm24.4$\\
+		Krum~\cite{blanchard2017byzantine} & $90.0\pm0.5$ & $89.9\pm0.9$ & $90.3\pm0.2$\\
+		FLTrust~\cite{cao2021fltrust} & $77.3\pm2.0$ & $73.6\pm2.4$ & $70.3\pm2.3$\\
+		FedDBC~\cite{feddbc2026} & $93.9\pm1.2$ & $\mathbf{92.8}\pm1.7$ & $65.3\pm11.3$\\
+		AMFTA & $90.3\pm1.1$ & $89.5\pm1.1$ & $89.3\pm0.8$\\
+		\textbf{AMFTA-ND} & $90.9\pm1.1$ & $90.6\pm1.4$ & $\mathbf{90.6}\pm1.1$\\
+		\bottomrule
+	\end{tabular}
+\end{table}

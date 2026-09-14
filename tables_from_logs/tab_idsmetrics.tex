@@ -1,0 +1,18 @@
+\begin{table}[H]
+	\caption{Detection metrics at $\rho=0.30$ under label flipping, mean $\pm$ across-seed sample standard deviation over three seeds. False-positive rate and ROC-AUC are omitted: the stored per-round logs record accuracy, F1, precision and recall only.}
+	\label{tab:idsmetrics}
+	\centering
+	\begin{tabular}{@{}lcc@{}}
+		\toprule
+		\textbf{Method} & \textbf{Precision} & \textbf{Recall}\\
+		\midrule
+		FedAvg & $0.923\pm0.012$ & $0.705\pm0.031$\\
+		Trimmed Mean & $0.943\pm0.009$ & $0.815\pm0.011$\\
+		Krum & $0.906\pm0.014$ & $0.921\pm0.076$\\
+		FLTrust & $0.840\pm0.003$ & $0.822\pm0.021$\\
+		FedDBC & $0.894\pm0.003$ & $0.737\pm0.043$\\
+		AMFTA & $0.910\pm0.047$ & $0.832\pm0.093$\\
+		\textbf{AMFTA-ND} & $0.940\pm0.007$ & $0.946\pm0.011$\\
+		\bottomrule
+	\end{tabular}
+\end{table}
