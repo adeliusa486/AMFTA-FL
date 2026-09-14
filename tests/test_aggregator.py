@@ -38,7 +38,7 @@ def updates(model):
 @pytest.fixture
 def val_buffer():
     torch.manual_seed(99)
-    return torch.rand(100, 45), torch.randint(0, 2, (100,)).float()
+    return torch.rand(100, 41), torch.randint(0, 2, (100,)).float()
 
 
 class TestAMFTAAggregator:

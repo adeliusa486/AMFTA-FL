@@ -36,7 +36,7 @@ from training.federated_runner import local_train
 
 N_CLIENTS   = 10
 N_SAMPLES   = 2000
-N_FEATURES  = 45
+N_FEATURES  = 41
 N_ROUNDS    = 3
 BYZ_FRAC    = 0.30
 

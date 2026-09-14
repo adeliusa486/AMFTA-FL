@@ -38,25 +38,34 @@ logger = logging.getLogger(__name__)
 
 COLORS = {
     "amfta":        "#2563EB",   # Blue
+    "amfta_noq":    "#0284C7",   # Sky Blue
+    "amfta_s":      "#0D9488",   # Teal
     "fltrust":      "#16A34A",   # Green
     "trimmed_mean": "#DC2626",   # Red
     "krum":         "#D97706",   # Amber
-    "fedavg":       "#7C3AED",   # Purple
+    "feddbc":       "#8B5CF6",   # Violet
+    "fedavg":       "#6B7280",   # Gray
 }
 
 METHOD_LABELS = {
-    "amfta":        "AMFTA (ours)",
+    "amfta":        "AMFTA",
+    "amfta_noq":    "AMFTA-ND (ours)",
+    "amfta_s":      "AMFTA-S (scheduled)",
     "fltrust":      "FLTrust",
     "trimmed_mean": "Trimmed Mean",
     "krum":         "Krum",
+    "feddbc":       "FedDBC",
     "fedavg":       "FedAvg",
 }
 
 LINE_STYLES = {
     "amfta":        "-",
+    "amfta_noq":    "-",
+    "amfta_s":      "-.",
     "fltrust":      "--",
     "trimmed_mean": "-.",
     "krum":         ":",
+    "feddbc":       (0, (5, 2)),
     "fedavg":       (0, (3, 1, 1, 1)),
 }
 

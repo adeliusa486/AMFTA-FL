@@ -49,7 +49,7 @@ def simple_updates():
 @pytest.fixture
 def val_buffer():
     torch.manual_seed(42)
-    X = torch.rand(100, 45)
+    X = torch.rand(100, 41)
     y = torch.randint(0, 2, (100,)).float()
     return X, y
 

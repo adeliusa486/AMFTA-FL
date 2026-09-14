@@ -23,13 +23,13 @@ from amfta.models.local_mlp import LocalMLP, build_model
 class TestLocalMLP:
     def test_default_output_shape(self):
         model = LocalMLP()
-        x = torch.randn(8, 45)
+        x = torch.randn(8, 41)
         out = model(x)
         assert out.shape == (8,)
 
     def test_output_in_zero_one(self):
         model = LocalMLP()
-        x = torch.randn(32, 45)
+        x = torch.randn(32, 41)
         out = model(x)
         assert (out >= 0.0).all() and (out <= 1.0).all()
 
@@ -68,17 +68,17 @@ class TestLocalMLP:
 
     def test_build_model_defaults(self):
         model = build_model()
-        assert model.input_dim == 45
+        assert model.input_dim == 41
 
     def test_single_sample_inference(self):
         model = LocalMLP()
-        x = torch.rand(1, 45)
+        x = torch.rand(1, 41)
         out = model(x)
         assert out.shape == (1,)
 
     def test_gradient_flows(self):
         model = LocalMLP()
-        x = torch.rand(8, 45)
+        x = torch.rand(8, 41)
         y = torch.rand(8)
         loss = torch.nn.BCELoss()(model(x), y)
         loss.backward()
@@ -93,7 +93,7 @@ class TestLocalMLP:
 class TestLabelFlippingAttack:
     def test_update_keys_match_model(self):
         model = LocalMLP()
-        X = torch.rand(50, 45)
+        X = torch.rand(50, 41)
         y = torch.randint(0, 2, (50,)).float()
         attack = LabelFlippingAttack()
         update = attack.get_update(model, (X, y), epochs=1)
@@ -102,7 +102,7 @@ class TestLabelFlippingAttack:
     def test_does_not_mutate_global_model(self):
         model = LocalMLP()
         sd_before = {k: v.clone() for k, v in model.state_dict().items()}
-        X = torch.rand(20, 45)
+        X = torch.rand(20, 41)
         y = torch.zeros(20)
         attack = LabelFlippingAttack()
         attack.get_update(model, (X, y), epochs=1)
@@ -112,7 +112,7 @@ class TestLabelFlippingAttack:
     def test_partial_flip_fraction(self):
         attack = LabelFlippingAttack(flip_fraction=0.5)
         model = LocalMLP()
-        X = torch.rand(40, 45)
+        X = torch.rand(40, 41)
         y = torch.zeros(40)
         update = attack.get_update(model, (X, y), epochs=1)
         assert update is not None
@@ -127,14 +127,14 @@ class TestLabelFlippingAttack:
 class TestGaussianNoiseAttack:
     def test_update_is_noise(self):
         model = LocalMLP()
-        X, y = torch.rand(20, 45), torch.rand(20)
+        X, y = torch.rand(20, 41), torch.rand(20)
         attack = GaussianNoiseAttack(sigma=1.0, seed=42)
         update = attack.get_update(model, (X, y))
         assert set(update.keys()) == set(model.state_dict().keys())
 
     def test_deterministic_with_seed(self):
         model = LocalMLP()
-        X, y = torch.rand(20, 45), torch.rand(20)
+        X, y = torch.rand(20, 41), torch.rand(20)
         a1 = GaussianNoiseAttack(sigma=1.0, seed=7)
         a2 = GaussianNoiseAttack(sigma=1.0, seed=7)
         u1 = a1.get_update(model, (X, y))
@@ -144,7 +144,7 @@ class TestGaussianNoiseAttack:
 
     def test_zero_sigma_gives_zero_update(self):
         model = LocalMLP()
-        X, y = torch.rand(20, 45), torch.rand(20)
+        X, y = torch.rand(20, 41), torch.rand(20)
         attack = GaussianNoiseAttack(sigma=0.0, seed=0)
         update = attack.get_update(model, (X, y))
         for v in update.values():
@@ -157,8 +157,8 @@ class TestGaussianNoiseAttack:
 
 class TestDataPartitioning:
     def test_generate_synthetic(self):
-        X, y = generate_synthetic_data(n_samples=1000, n_features=45, seed=42)
-        assert X.shape == (1000, 45)
+        X, y = generate_synthetic_data(n_samples=1000, n_features=41, seed=42)
+        assert X.shape == (1000, 41)
         assert y.shape == (1000,)
         assert set(np.unique(y)) == {0, 1}
 
