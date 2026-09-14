@@ -75,26 +75,74 @@ AGG_MS_BY_N = {   # MEASURED - median of 25 timed reps after 3 warm-ups, CPU, 1 
           "AMFTA": 22.58, "Krum": 836.34, "FedDBC": 14.00},
 }
 
-# Robust accuracy (%) by attacker fraction. MEASURED - manuscript Tables 4 and 5.
+# Robust accuracy (%) by attacker fraction.
 RHOS = (0.10, 0.20, 0.30)
-ACC_LF = {   # label flipping
+
+FALLBACK_ACC_LF = {
     "FedAvg":       (94.3, 89.3, 73.8),
     "Trimmed Mean": (92.1, 91.4, 83.0),
     "Krum":         (89.7, 89.5, 87.3),
     "FLTrust":      (77.4, 74.6, 72.1),
     "FedDBC":       (92.1, 85.6, 72.0),
     "AMFTA":        (93.1, 92.8, 80.3),
-    "AMFTA-ND":     (92.5, 92.3, 91.7, 70.9),
+    "AMFTA-ND":     (92.5, 92.3, 91.7),
 }
-ACC_GN = {   # Gaussian-noise model poisoning
+FALLBACK_ACC_GN = {
     "FedAvg":       (71.3, 40.8, 42.8),
     "Trimmed Mean": (94.4, 57.0, 41.5),
     "Krum":         (90.0, 89.9, 90.3),
     "FLTrust":      (77.3, 73.6, 70.3),
     "FedDBC":       (93.9, 92.8, 65.3),
     "AMFTA":        (90.3, 89.5, 89.3),
-    "AMFTA-ND":     (90.9, 90.6, 90.6, 79.2),
+    "AMFTA-ND":     (90.9, 90.6, 90.6),
 }
+
+METHOD_KEY_MAP = {
+    "FedAvg": "fedavg",
+    "Trimmed Mean": "trimmed_mean",
+    "Krum": "krum",
+    "FLTrust": "fltrust",
+    "FedDBC": "feddbc",
+    "AMFTA": "amfta",
+    "AMFTA-ND": "amfta_noq",
+}
+
+
+def load_live_accuracies(results_path: Path | str | None = None) -> tuple[dict, dict]:
+    """Load live mean accuracy (%) per attacker fraction from paper_tables.json."""
+    if results_path is None:
+        target = HERE.parent / "results" / "paper_tables.json"
+    else:
+        target = Path(results_path)
+        if target.is_dir():
+            target = target / "paper_tables.json"
+    if not target.exists():
+        target = Path("results/paper_tables.json")
+
+    if not target.exists():
+        return FALLBACK_ACC_LF, FALLBACK_ACC_GN
+
+    with open(target, encoding="utf-8") as f:
+        pt = json.load(f)["table"]
+
+    acc_lf = {}
+    acc_gn = {}
+    for disp_name, key_name in METHOD_KEY_MAP.items():
+        lf_vals = []
+        gn_vals = []
+        for r in RHOS:
+            lf_key = f"{key_name}|byz{r:.2f}|label_flipping"
+            gn_key = f"{key_name}|byz{r:.2f}|gaussian_noise"
+            lf_val = round(pt[lf_key]["acc_mean"] * 100.0, 1) if lf_key in pt else FALLBACK_ACC_LF[disp_name][len(lf_vals)]
+            gn_val = round(pt[gn_key]["acc_mean"] * 100.0, 1) if gn_key in pt else FALLBACK_ACC_GN[disp_name][len(gn_vals)]
+            lf_vals.append(lf_val)
+            gn_vals.append(gn_val)
+        acc_lf[disp_name] = tuple(lf_vals)
+        acc_gn[disp_name] = tuple(gn_vals)
+    return acc_lf, acc_gn
+
+
+ACC_LF, ACC_GN = load_live_accuracies()
 ACC_RHO30 = {m: (ACC_LF[m][2], ACC_GN[m][2]) for m in ACC_LF}
 
 # Server-side extra work beyond aggregation, expressed as an equivalent
@@ -167,10 +215,22 @@ P_SERVER_W = 82.0   # Xeon Gold 6248R, 205 W TDP at ~40% sustained utilisation
 # 3. Exact quantities
 # ---------------------------------------------------------------------------
 
-def load_partition_sizes(seed: int = 42) -> np.ndarray:
-    """Real Dirichlet(alpha=0.5) partition sizes over 100 clients (TON_IoT)."""
+def load_partition_sizes(seed: int = 42, full_stream_scale: bool = False) -> np.ndarray:
+    """Load Dirichlet(alpha=0.5) partition sample sizes over 100 clients.
+
+    The default partition represents a 70,018-sample empirical IoT fleet subset
+    (seed 42: min 10, max 3,141, median 488) used for per-client compute latency
+    and energy profiling across device tiers. If full_stream_scale is True,
+    scales the client sample distribution to the full 9,195,116-flow dataset.
+    """
     sizes = json.loads((HERE / "partition_sizes.json").read_text())
-    return np.array(sizes[str(seed)], dtype=np.int64)
+    base_sizes = np.array(sizes[str(seed)], dtype=np.int64)
+    if full_stream_scale:
+        total_samples = 9_195_116
+        scaled = np.round(base_sizes * (total_samples / float(base_sizes.sum()))).astype(np.int64)
+        scaled[-1] += total_samples - scaled.sum()
+        return scaled
+    return base_sizes
 
 
 def client_flops_per_round(n_i: np.ndarray, d: int = D_PARAMS,
@@ -352,9 +412,9 @@ def fmt(x, unit=""):
     return f"{x*1e6:.2f} u{unit}"
 
 
-def build(seed: int = 42, d: int = D_PARAMS):
+def build(seed: int = 42, d: int = D_PARAMS, full_stream_scale: bool = False):
     rng = np.random.default_rng(seed)
-    n_i = load_partition_sizes(seed)
+    n_i = load_partition_sizes(seed, full_stream_scale=full_stream_scale)
     cls_idx = assign_classes(len(n_i), rng)
     res = {"seed": seed, "d": d, "n_total": int(n_i.sum())}
 
@@ -556,11 +616,19 @@ def sensitivity(seed: int = 42):
 
 
 def main():
-    ap = argparse.ArgumentParser()
-    ap.add_argument("--json", action="store_true")
+    global ACC_LF, ACC_GN, ACC_RHO30
+    ap = argparse.ArgumentParser(description="Analytical FLOP, latency, and energy model for AMFTA")
+    ap.add_argument("--json", action="store_true", help="Dump machine-readable results to resource_model.json")
+    ap.add_argument("--results", type=str, default=None, help="Path to results directory or paper_tables.json")
+    ap.add_argument("--scale_to_full_stream", action="store_true",
+                    help="Scale empirical client partition to full 9,195,116-flow dataset")
     args = ap.parse_args()
 
-    per_seed = {s: build(s) for s in SEEDS}
+    if args.results:
+        ACC_LF, ACC_GN = load_live_accuracies(args.results)
+        ACC_RHO30 = {m: (ACC_LF[m][2], ACC_GN[m][2]) for m in ACC_LF}
+
+    per_seed = {s: build(s, full_stream_scale=args.scale_to_full_stream) for s in SEEDS}
     r = per_seed[42]
 
     if args.json:

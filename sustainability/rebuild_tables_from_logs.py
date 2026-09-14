@@ -6,7 +6,7 @@ tables whose numbers exist. Tables the logs cannot support are listed at the
 end rather than fabricated.
 
     python rebuild_tables_from_logs.py \
-        --results "C:/Users/adeel/.gemini/antigravity/scratch/amfta-fl/amfta-fl/results" \
+        --results results \
         --out tables_from_logs
 
 Reporting convention: per seed, the mean over the final five rounds; across
@@ -165,8 +165,11 @@ def coverage(results):
 
 
 def main():
+    default_results = Path(__file__).resolve().parent.parent / "results"
+    if not default_results.exists():
+        default_results = Path("results")
     ap = argparse.ArgumentParser()
-    ap.add_argument("--results", required=True)
+    ap.add_argument("--results", default=str(default_results), help="Path to results directory")
     ap.add_argument("--out", default="tables_from_logs")
     a = ap.parse_args()
     out = Path(a.out); out.mkdir(parents=True, exist_ok=True)

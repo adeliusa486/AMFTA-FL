@@ -31,6 +31,7 @@ the tests are run and applied uniformly to every method.
 
 from __future__ import annotations
 
+import argparse
 import json
 import math
 from pathlib import Path
@@ -44,27 +45,82 @@ EPSILON = 5.0     # practical margin, percentage points
 ALPHA = 0.05
 N = 3
 
-# (mean, sd) at rho = 0.10 and rho = 0.30. MEASURED - manuscript Tables 4, 5.
-DATA = {
+FALLBACK_DATA = {
     "label flipping": {
-        "FedAvg":       ((94.3, 0.7), (73.8, 0.8)),
-        "Trimmed Mean": ((92.1, 1.3), (83.0, 0.7)),
-        "Krum":         ((89.7, 0.6), (87.3, 3.3)),
-        "FLTrust":      ((77.4, 1.5), (72.1, 1.1)),
-        "FedDBC":       ((92.1, 1.3), (72.0, 2.4)),
-        "AMFTA":        ((93.1, 1.2), (80.3, 9.6)),
-        "AMFTA-ND":     ((92.5, 1.1), (91.7, 1.0)),
+        "FedAvg":       ((94.2606, 0.8692), (73.8122, 1.0043)),
+        "Trimmed Mean": ((92.0709, 1.5320), (82.9883, 0.8384)),
+        "Krum":         ((89.6588, 0.7679), (87.2989, 3.9927)),
+        "FLTrust":      ((77.3573, 1.8327), (72.0531, 1.2917)),
+        "FedDBC":       ((92.0753, 1.5393), (71.9868, 2.8852)),
+        "AMFTA":        ((93.0639, 1.4499), (80.3176, 11.8017)),
+        "AMFTA-ND":     ((92.4691, 1.3372), (91.6902, 1.2162)),
     },
     "Gaussian noise": {
-        "FedAvg":       ((71.3, 1.8), (42.8, 21.8)),
-        "Trimmed Mean": ((94.4, 0.8), (41.5, 19.9)),
-        "Krum":         ((90.0, 0.4), (90.3, 0.2)),
-        "FLTrust":      ((77.3, 1.6), (70.3, 1.9)),
-        "FedDBC":       ((93.9, 1.0), (65.3, 9.2)),
-        "AMFTA":        ((90.3, 0.9), (89.3, 0.7)),
-        "AMFTA-ND":     ((90.9, 0.9), (90.6, 0.9)),
+        "FedAvg":       ((71.3324, 2.1685), (42.8003, 26.6524)),
+        "Trimmed Mean": ((94.4296, 0.9971), (41.4878, 24.3783)),
+        "Krum":         ((89.9501, 0.5448), (90.3199, 0.2456)),
+        "FLTrust":      ((77.2887, 1.9810), (70.2904, 2.2885)),
+        "FedDBC":       ((93.8960, 1.1892), (65.3342, 11.2593)),
+        "AMFTA":        ((90.2903, 1.1174), (89.2838, 0.8323)),
+        "AMFTA-ND":     ((90.9155, 1.0920), (90.5538, 1.0933)),
     },
 }
+
+
+def load_live_data(results_path: Path | str | None = None) -> dict:
+    """Load mean and sample standard deviation (ddof=1) from paper_tables.json."""
+    if results_path is None:
+        target = Path(__file__).resolve().parent.parent / "results" / "paper_tables.json"
+    else:
+        target = Path(results_path)
+        if target.is_dir():
+            target = target / "paper_tables.json"
+    if not target.exists():
+        target = Path("results/paper_tables.json")
+
+    if not target.exists():
+        return FALLBACK_DATA
+
+    with open(target, encoding="utf-8") as f:
+        pt = json.load(f)["table"]
+
+    methods = [
+        ("FedAvg", "fedavg"),
+        ("Trimmed Mean", "trimmed_mean"),
+        ("Krum", "krum"),
+        ("FLTrust", "fltrust"),
+        ("FedDBC", "feddbc"),
+        ("AMFTA", "amfta"),
+        ("AMFTA-ND", "amfta_noq"),
+    ]
+    attacks = [
+        ("label flipping", "label_flipping"),
+        ("Gaussian noise", "gaussian_noise"),
+    ]
+
+    data = {}
+    for att_disp, att_key in attacks:
+        data[att_disp] = {}
+        for m_disp, m_key in methods:
+            k1 = f"{m_key}|byz0.10|{att_key}"
+            k2 = f"{m_key}|byz0.30|{att_key}"
+            if k1 not in pt or k2 not in pt:
+                continue
+            entry1 = pt[k1]
+            entry2 = pt[k2]
+            n1 = entry1.get("n_seeds", 3)
+            n2 = entry2.get("n_seeds", 3)
+            s1_factor = math.sqrt(n1 / (n1 - 1)) if n1 > 1 else 1.0
+            s2_factor = math.sqrt(n2 / (n2 - 1)) if n2 > 1 else 1.0
+            m1 = entry1["acc_mean"] * 100.0
+            s1 = entry1["acc_std"] * s1_factor * 100.0
+            m2 = entry2["acc_mean"] * 100.0
+            s2 = entry2["acc_std"] * s2_factor * 100.0
+            data[att_disp][m_disp] = ((m1, s1), (m2, s2))
+    return data
+
+
+DATA = load_live_data()
 
 
 def welch(m1, s1, n1, m2, s2, n2):
@@ -104,10 +160,17 @@ def ci90(m1, s1, n1, m2, s2, n2):
 
 
 def main():
+    parser = argparse.ArgumentParser(description="TOST equivalence testing for degradation claim")
+    parser.add_argument("--results", type=str, default=None,
+                        help="Path to results directory or paper_tables.json")
+    args = parser.parse_args()
+
+    data = load_live_data(args.results) if args.results else DATA
+
     results = {}
     print(f"Equivalence testing, margin epsilon = {EPSILON} pp, alpha = {ALPHA}, n = {N}")
     print("Drop is accuracy at rho=0.10 minus accuracy at rho=0.30 (positive = degradation).\n")
-    for attack, table in DATA.items():
+    for attack, table in data.items():
         print(f"--- {attack} ---")
         print(f"  {'method':<14s}{'drop':>7s}{'90% CI':>18s}"
               f"{'p_NHST':>9s}{'p_TOST':>9s}  verdict")

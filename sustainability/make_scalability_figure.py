@@ -14,7 +14,8 @@ import numpy as np
 
 import resource_model as rm
 
-FIG = Path(__file__).parent.parent / "manuscript" / "figures"
+FIG = Path(__file__).resolve().parent.parent / "figures"
+FIG.mkdir(parents=True, exist_ok=True)
 
 plt.rcParams.update({"font.size": 9, "font.family": "serif", "axes.grid": True,
                      "grid.alpha": 0.25, "grid.linewidth": 0.5,

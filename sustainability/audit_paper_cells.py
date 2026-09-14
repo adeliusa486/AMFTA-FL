@@ -1,8 +1,10 @@
-"""Audit every manuscript cell against the aggregated run table."""
+from pathlib import Path
 import json
 
-D = json.load(open(r"C:\Users\adeel\.gemini\antigravity\scratch\amfta-fl\amfta-fl"
-                   r"\results\paper_tables.json"))["table"]
+_results_path = Path(__file__).resolve().parent.parent / "results" / "paper_tables.json"
+if not _results_path.exists():
+    _results_path = Path("results/paper_tables.json")
+D = json.load(open(_results_path, encoding="utf-8"))["table"]
 
 PAPER = {
  "label_flipping": {

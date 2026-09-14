@@ -1,0 +1,933 @@
+{
+  "per_seed": {
+    "42": {
+      "seed": 42,
+      "d": 41,
+      "n_total": 70018,
+      "client": {
+        "e_compute_total_j": 3.4037605500000003,
+        "e_comm_total_j": 542.6876,
+        "e_total_j": 546.0913605499999,
+        "bytes_total": 820000.0,
+        "comm_share": 0.9937670492597214
+      },
+      "per_class": {
+        "A": {
+          "label": "Gateway / roadside unit (Cortex-A72 class)",
+          "radio": "Wi-Fi / Ethernet",
+          "n_clients": 20,
+          "mean_samples": 684.1,
+          "e_compute_j": 0.13159154999999997,
+          "e_comm_j": 25.0656,
+          "e_total_j": 25.19719155,
+          "mean_latency_s": 4.386385e-05,
+          "max_latency_s": 0.000170027,
+          "mean_budget_pct": 1.2598595774999998e-05,
+          "max_budget_pct": 1.2787840500000002e-05,
+          "runs_per_budget": 7819928.62672943
+        },
+        "B": {
+          "label": "Building or meter concentrator (Cortex-A7 class)",
+          "radio": "NB-IoT / LTE-M",
+          "n_clients": 45,
+          "mean_samples": 731.3777777777777,
+          "e_compute_j": 1.5827025,
+          "e_comm_j": 340.4520000000001,
+          "e_total_j": 342.0347025,
+          "mean_latency_s": 0.0009378977777777778,
+          "max_latency_s": 0.00402579,
+          "mean_budget_pct": 0.0007600771166666667,
+          "max_budget_pct": 0.0007716567125000001,
+          "runs_per_budget": 129591.30450122274
+        },
+        "C": {
+          "label": "Battery sensor node (Cortex-M4 class)",
+          "radio": "LoRaWAN",
+          "n_clients": 35,
+          "mean_samples": 669.2571428571429,
+          "e_compute_j": 1.6894665000000002,
+          "e_comm_j": 177.17000000000002,
+          "e_total_j": 178.8594665,
+          "mean_latency_s": 0.02145354285714286,
+          "max_latency_s": 0.0611925,
+          "mean_budget_pct": 0.015772439726631393,
+          "max_budget_pct": 0.01604840470679012,
+          "runs_per_budget": 6231.148941407849
+        }
+      },
+      "latency": {
+        "round_s": 0.0611925,
+        "median_client_s": 0.00087535,
+        "straggler_ratio": 69.9063231850117
+      },
+      "methods": {
+        "FedAvg": {
+          "client_j": 546.0913605499999,
+          "server_j": 1.476,
+          "server_agg_s": 0.018,
+          "server_extra_s": 0.0,
+          "total_j": 547.5673605499999,
+          "bytes_total": 820000.0,
+          "acc_lf": 73.8,
+          "acc_gn": 42.8,
+          "acc_worst": 42.8,
+          "j_per_pp_worst": 12.79362991939252,
+          "worst_acc_per_kj": 78.16389924521772
+        },
+        "FLTrust": {
+          "client_j": 546.0913605499999,
+          "server_j": 9.777946787000001,
+          "server_agg_s": 0.117,
+          "server_extra_s": 0.0022432535,
+          "total_j": 555.8693073369999,
+          "bytes_total": 820000.0,
+          "acc_lf": 72.1,
+          "acc_gn": 70.3,
+          "acc_worst": 70.3,
+          "j_per_pp_worst": 7.907102522574679,
+          "worst_acc_per_kj": 126.46857646590676
+        },
+        "Trimmed Mean": {
+          "client_j": 546.0913605499999,
+          "server_j": 0.615,
+          "server_agg_s": 0.0075,
+          "server_extra_s": 0.0,
+          "total_j": 546.7063605499999,
+          "bytes_total": 820000.0,
+          "acc_lf": 83.0,
+          "acc_gn": 41.5,
+          "acc_worst": 41.5,
+          "j_per_pp_worst": 13.173647242168672,
+          "worst_acc_per_kj": 75.90912232711175
+        },
+        "AMFTA-ND": {
+          "client_j": 546.0913605499999,
+          "server_j": 8.9585,
+          "server_agg_s": 0.10925,
+          "server_extra_s": 0.0,
+          "total_j": 555.0498605499998,
+          "bytes_total": 820000.0,
+          "acc_lf": 91.7,
+          "acc_gn": 90.6,
+          "acc_worst": 90.6,
+          "j_per_pp_worst": 6.126378151766003,
+          "worst_acc_per_kj": 163.2285789788764
+        },
+        "AMFTA": {
+          "client_j": 546.0913605499999,
+          "server_j": 10.21750258,
+          "server_agg_s": 0.11025,
+          "server_extra_s": 0.01435369,
+          "total_j": 556.3088631299998,
+          "bytes_total": 820000.0,
+          "acc_lf": 80.3,
+          "acc_gn": 89.3,
+          "acc_worst": 80.3,
+          "j_per_pp_worst": 6.92788123449564,
+          "worst_acc_per_kj": 144.34427585460787
+        },
+        "Krum": {
+          "client_j": 546.0913605499999,
+          "server_j": 68.88000000000001,
+          "server_agg_s": 0.8400000000000001,
+          "server_extra_s": 0.0,
+          "total_j": 614.9713605499999,
+          "bytes_total": 820000.0,
+          "acc_lf": 87.3,
+          "acc_gn": 90.3,
+          "acc_worst": 87.3,
+          "j_per_pp_worst": 7.0443454816723925,
+          "worst_acc_per_kj": 141.95783023444085
+        },
+        "FedDBC": {
+          "client_j": 546.0913605499999,
+          "server_j": 3.813,
+          "server_agg_s": 0.0465,
+          "server_extra_s": 0.0,
+          "total_j": 549.9043605499999,
+          "bytes_total": 820000.0,
+          "acc_lf": 72.0,
+          "acc_gn": 65.3,
+          "acc_worst": 65.3,
+          "j_per_pp_worst": 8.421200008422662,
+          "worst_acc_per_kj": 118.74792179259799
+        }
+      },
+      "pareto": [
+        "Trimmed Mean",
+        "FedAvg",
+        "FedDBC",
+        "AMFTA-ND"
+      ],
+      "ras": {
+        "S_mean": 0.38669715826797424,
+        "S_min": 0.05,
+        "S_max": 1.0,
+        "mean_participation": 0.750328802828017,
+        "mean_epochs": 3.7,
+        "e_total_j": 413.5348827886968,
+        "energy_saving_pct": 24.273681537059634,
+        "bytes_total": 615269.618318974,
+        "comm_saving_pct": 24.967119717198283,
+        "max_amplification": 4.0,
+        "metadata_overhead_pct_uplink": 9.75609756097561,
+        "metadata_energy_overhead_pct": 0.4371429713877495,
+        "classA_energy_saving_pct": 0.0,
+        "classA_budget_pct_before": 1.2598595774999998e-05,
+        "classA_budget_pct_after": 1.2598595774999998e-05,
+        "classA_mean_p": 1.0,
+        "classB_energy_saving_pct": 3.87809357428035,
+        "classB_budget_pct_before": 0.0007600771166666667,
+        "classB_budget_pct_after": 0.0007306006148456412,
+        "classB_mean_p": 0.9618626191263266,
+        "classC_energy_saving_pct": 66.69596766455842,
+        "classC_budget_pct_before": 0.015772439726631393,
+        "classC_budget_pct_after": 0.00525285842664535,
+        "classC_mean_p": 0.3356874977747715,
+        "latency_round_s_after": 0.0122385
+      },
+      "spread": {
+        "n_min": 10,
+        "n_max": 3141,
+        "n_median": 487.5,
+        "sample_ratio": 314.1,
+        "latency_ratio": 87794.11764705883,
+        "energy_ratio": 6.156583887203651
+      }
+    },
+    "123": {
+      "seed": 123,
+      "d": 41,
+      "n_total": 70014,
+      "client": {
+        "e_compute_total_j": 3.3981502125,
+        "e_comm_total_j": 542.6876,
+        "e_total_j": 546.0857502125,
+        "bytes_total": 820000.0,
+        "comm_share": 0.9937772589539688
+      },
+      "per_class": {
+        "A": {
+          "label": "Gateway / roadside unit (Cortex-A72 class)",
+          "radio": "Wi-Fi / Ethernet",
+          "n_clients": 20,
+          "mean_samples": 717.75,
+          "e_compute_j": 0.13805827499999998,
+          "e_comm_j": 25.0656,
+          "e_total_j": 25.203658275,
+          "mean_latency_s": 4.6019425000000004e-05,
+          "max_latency_s": 0.0001493425,
+          "mean_budget_pct": 1.26018291375e-05,
+          "max_budget_pct": 1.2756813749999999e-05,
+          "runs_per_budget": 7838948.028852425
+        },
+        "B": {
+          "label": "Building or meter concentrator (Cortex-A7 class)",
+          "radio": "NB-IoT / LTE-M",
+          "n_clients": 45,
+          "mean_samples": 697.7333333333333,
+          "e_compute_j": 1.5098557499999996,
+          "e_comm_j": 340.4520000000001,
+          "e_total_j": 341.96185575,
+          "mean_latency_s": 0.0008947293333333333,
+          "max_latency_s": 0.00666701,
+          "mean_budget_pct": 0.000759915235,
+          "max_budget_pct": 0.0007815612875,
+          "runs_per_budget": 127949.01896928973
+        },
+        "C": {
+          "label": "Battery sensor node (Cortex-M4 class)",
+          "radio": "LoRaWAN",
+          "n_clients": 35,
+          "mean_samples": 693.1714285714286,
+          "e_compute_j": 1.7502361874999999,
+          "e_comm_j": 177.17000000000002,
+          "e_total_j": 178.9202361875,
+          "mean_latency_s": 0.022225221428571428,
+          "max_latency_s": 0.0834965,
+          "mean_budget_pct": 0.015777798605599642,
+          "max_budget_pct": 0.016203293595679014,
+          "runs_per_budget": 6171.584771300283
+        }
+      },
+      "latency": {
+        "round_s": 0.0834965,
+        "median_client_s": 0.0005885549999999999,
+        "straggler_ratio": 141.8669453152212
+      },
+      "methods": {
+        "FedAvg": {
+          "client_j": 546.0857502125,
+          "server_j": 1.476,
+          "server_agg_s": 0.018,
+          "server_extra_s": 0.0,
+          "total_j": 547.5617502125,
+          "bytes_total": 820000.0,
+          "acc_lf": 73.8,
+          "acc_gn": 42.8,
+          "acc_worst": 42.8,
+          "j_per_pp_worst": 12.793498836740655,
+          "worst_acc_per_kj": 78.16470011535685
+        },
+        "FLTrust": {
+          "client_j": 546.0857502125,
+          "server_j": 9.777936701,
+          "server_agg_s": 0.117,
+          "server_extra_s": 0.0022431305,
+          "total_j": 555.8636869135,
+          "bytes_total": 820000.0,
+          "acc_lf": 72.1,
+          "acc_gn": 70.3,
+          "acc_worst": 70.3,
+          "j_per_pp_worst": 7.9070225734495025,
+          "worst_acc_per_kj": 126.46985520919561
+        },
+        "Trimmed Mean": {
+          "client_j": 546.0857502125,
+          "server_j": 0.615,
+          "server_agg_s": 0.0075,
+          "server_extra_s": 0.0,
+          "total_j": 546.7007502125,
+          "bytes_total": 820000.0,
+          "acc_lf": 83.0,
+          "acc_gn": 41.5,
+          "acc_worst": 41.5,
+          "j_per_pp_worst": 13.173512053313253,
+          "worst_acc_per_kj": 75.90990131963262
+        },
+        "AMFTA-ND": {
+          "client_j": 546.0857502125,
+          "server_j": 8.9585,
+          "server_agg_s": 0.10925,
+          "server_extra_s": 0.0,
+          "total_j": 555.0442502125,
+          "bytes_total": 820000.0,
+          "acc_lf": 91.7,
+          "acc_gn": 90.6,
+          "acc_worst": 90.6,
+          "j_per_pp_worst": 6.126316227511038,
+          "worst_acc_per_kj": 163.23022887871298
+        },
+        "AMFTA": {
+          "client_j": 546.0857502125,
+          "server_j": 10.21743534,
+          "server_agg_s": 0.11025,
+          "server_extra_s": 0.01435287,
+          "total_j": 556.3031855524999,
+          "bytes_total": 820000.0,
+          "acc_lf": 80.3,
+          "acc_gn": 89.3,
+          "acc_worst": 80.3,
+          "j_per_pp_worst": 6.927810529919053,
+          "worst_acc_per_kj": 144.34574901858414
+        },
+        "Krum": {
+          "client_j": 546.0857502125,
+          "server_j": 68.88000000000001,
+          "server_agg_s": 0.8400000000000001,
+          "server_extra_s": 0.0,
+          "total_j": 614.9657502125,
+          "bytes_total": 820000.0,
+          "acc_lf": 87.3,
+          "acc_gn": 90.3,
+          "acc_worst": 87.3,
+          "j_per_pp_worst": 7.04428121663803,
+          "worst_acc_per_kj": 141.9591253168712
+        },
+        "FedDBC": {
+          "client_j": 546.0857502125,
+          "server_j": 3.813,
+          "server_agg_s": 0.0465,
+          "server_extra_s": 0.0,
+          "total_j": 549.8987502125,
+          "bytes_total": 820000.0,
+          "acc_lf": 72.0,
+          "acc_gn": 65.3,
+          "acc_worst": 65.3,
+          "j_per_pp_worst": 8.421114092075038,
+          "worst_acc_per_kj": 118.74913331729852
+        }
+      },
+      "pareto": [
+        "Trimmed Mean",
+        "FedAvg",
+        "FedDBC",
+        "AMFTA-ND"
+      ],
+      "ras": {
+        "S_mean": 0.41196817094505706,
+        "S_min": 0.05,
+        "S_max": 0.9660187186857585,
+        "mean_participation": 0.7511821034498294,
+        "mean_epochs": 3.73,
+        "e_total_j": 414.56927055518975,
+        "energy_saving_pct": 24.08348498493741,
+        "bytes_total": 615969.3248288601,
+        "comm_saving_pct": 24.881789655017062,
+        "max_amplification": 4.0,
+        "metadata_overhead_pct_uplink": 9.75609756097561,
+        "metadata_energy_overhead_pct": 0.43714746247658365,
+        "classA_energy_saving_pct": 0.0,
+        "classA_budget_pct_before": 1.26018291375e-05,
+        "classA_budget_pct_after": 1.26018291375e-05,
+        "classA_mean_p": 1.0,
+        "classB_energy_saving_pct": 3.2831037409714603,
+        "classB_budget_pct_before": 0.000759915235,
+        "classB_budget_pct_after": 0.0007349664294915031,
+        "classB_mean_p": 0.9679045162599823,
+        "classC_energy_saving_pct": 67.23080616349553,
+        "classC_budget_pct_before": 0.015777798605599642,
+        "classC_budget_pct_after": 0.005170257408202249,
+        "classC_mean_p": 0.3303573460938211,
+        "latency_round_s_after": 0.0166993
+      },
+      "spread": {
+        "n_min": 10,
+        "n_max": 5203,
+        "n_median": 444.5,
+        "sample_ratio": 520.3,
+        "latency_ratio": 41989.69072164948,
+        "energy_ratio": 6.234642886580018
+      }
+    },
+    "456": {
+      "seed": 456,
+      "d": 41,
+      "n_total": 70004,
+      "client": {
+        "e_compute_total_j": 3.4313525249999994,
+        "e_comm_total_j": 542.6876,
+        "e_total_j": 546.118952525,
+        "bytes_total": 820000.0,
+        "comm_share": 0.9937168404261836
+      },
+      "per_class": {
+        "A": {
+          "label": "Gateway / roadside unit (Cortex-A72 class)",
+          "radio": "Wi-Fi / Ethernet",
+          "n_clients": 20,
+          "mean_samples": 808.55,
+          "e_compute_j": 0.15552427500000002,
+          "e_comm_j": 25.0656,
+          "e_total_j": 25.221124274999998,
+          "mean_latency_s": 5.184142499999999e-05,
+          "max_latency_s": 0.0002022735,
+          "mean_budget_pct": 1.2610562137499997e-05,
+          "max_budget_pct": 1.2836210249999999e-05,
+          "runs_per_budget": 7790461.363002371
+        },
+        "B": {
+          "label": "Building or meter concentrator (Cortex-A7 class)",
+          "radio": "NB-IoT / LTE-M",
+          "n_clients": 45,
+          "mean_samples": 560.9555555555555,
+          "e_compute_j": 1.214086875,
+          "e_comm_j": 340.4520000000001,
+          "e_total_j": 341.666086875,
+          "mean_latency_s": 0.0007194588888888887,
+          "max_latency_s": 0.00257808,
+          "mean_budget_pct": 0.0007592579708333334,
+          "max_budget_pct": 0.0007662277999999999,
+          "runs_per_budget": 130509.49078067907
+        },
+        "C": {
+          "label": "Battery sensor node (Cortex-M4 class)",
+          "radio": "LoRaWAN",
+          "n_clients": 35,
+          "mean_samples": 816.8571428571429,
+          "e_compute_j": 2.0617413749999995,
+          "e_comm_j": 177.17000000000002,
+          "e_total_j": 179.23174137499998,
+          "mean_latency_s": 0.026180842857142863,
+          "max_latency_s": 0.114431,
+          "mean_budget_pct": 0.015805268198853615,
+          "max_budget_pct": 0.016418116512345676,
+          "runs_per_budget": 6090.832643610766
+        }
+      },
+      "latency": {
+        "round_s": 0.114431,
+        "median_client_s": 0.00080524,
+        "straggler_ratio": 142.10794297352342
+      },
+      "methods": {
+        "FedAvg": {
+          "client_j": 546.118952525,
+          "server_j": 1.476,
+          "server_agg_s": 0.018,
+          "server_extra_s": 0.0,
+          "total_j": 547.594952525,
+          "bytes_total": 820000.0,
+          "acc_lf": 73.8,
+          "acc_gn": 42.8,
+          "acc_worst": 42.8,
+          "j_per_pp_worst": 12.79427459170561,
+          "worst_acc_per_kj": 78.15996075684426
+        },
+        "FLTrust": {
+          "client_j": 546.118952525,
+          "server_j": 9.777911486,
+          "server_agg_s": 0.117,
+          "server_extra_s": 0.002242823,
+          "total_j": 555.896864011,
+          "bytes_total": 820000.0,
+          "acc_lf": 72.1,
+          "acc_gn": 70.3,
+          "acc_worst": 70.3,
+          "j_per_pp_worst": 7.907494509402562,
+          "worst_acc_per_kj": 126.46230722145054
+        },
+        "Trimmed Mean": {
+          "client_j": 546.118952525,
+          "server_j": 0.615,
+          "server_agg_s": 0.0075,
+          "server_extra_s": 0.0,
+          "total_j": 546.7339525250001,
+          "bytes_total": 820000.0,
+          "acc_lf": 83.0,
+          "acc_gn": 41.5,
+          "acc_worst": 41.5,
+          "j_per_pp_worst": 13.174312109036146,
+          "worst_acc_per_kj": 75.90529142801383
+        },
+        "AMFTA-ND": {
+          "client_j": 546.118952525,
+          "server_j": 8.9585,
+          "server_agg_s": 0.10925,
+          "server_extra_s": 0.0,
+          "total_j": 555.077452525,
+          "bytes_total": 820000.0,
+          "acc_lf": 91.7,
+          "acc_gn": 90.6,
+          "acc_worst": 90.6,
+          "j_per_pp_worst": 6.126682698951435,
+          "worst_acc_per_kj": 163.22046515827356
+        },
+        "AMFTA": {
+          "client_j": 546.118952525,
+          "server_j": 10.21726724,
+          "server_agg_s": 0.11025,
+          "server_extra_s": 0.01435082,
+          "total_j": 556.336219765,
+          "bytes_total": 820000.0,
+          "acc_lf": 80.3,
+          "acc_gn": 89.3,
+          "acc_worst": 80.3,
+          "j_per_pp_worst": 6.928221914881694,
+          "worst_acc_per_kj": 144.33717803582738
+        },
+        "Krum": {
+          "client_j": 546.118952525,
+          "server_j": 68.88000000000001,
+          "server_agg_s": 0.8400000000000001,
+          "server_extra_s": 0.0,
+          "total_j": 614.998952525,
+          "bytes_total": 820000.0,
+          "acc_lf": 87.3,
+          "acc_gn": 90.3,
+          "acc_worst": 87.3,
+          "j_per_pp_worst": 7.044661540950745,
+          "worst_acc_per_kj": 141.9514612855397
+        },
+        "FedDBC": {
+          "client_j": 546.118952525,
+          "server_j": 3.813,
+          "server_agg_s": 0.0465,
+          "server_extra_s": 0.0,
+          "total_j": 549.931952525,
+          "bytes_total": 820000.0,
+          "acc_lf": 72.0,
+          "acc_gn": 65.3,
+          "acc_worst": 65.3,
+          "j_per_pp_worst": 8.42162255015314,
+          "worst_acc_per_kj": 118.74196380147859
+        }
+      },
+      "pareto": [
+        "Trimmed Mean",
+        "FedAvg",
+        "FedDBC",
+        "AMFTA-ND"
+      ],
+      "ras": {
+        "S_mean": 0.39195217090510165,
+        "S_min": 0.05,
+        "S_max": 1.0,
+        "mean_participation": 0.7531445658136738,
+        "mean_epochs": 3.73,
+        "e_total_j": 417.363856196595,
+        "energy_saving_pct": 23.57638308157982,
+        "bytes_total": 617578.5439672126,
+        "comm_saving_pct": 24.685543418632616,
+        "max_amplification": 4.0,
+        "metadata_overhead_pct_uplink": 9.75609756097561,
+        "metadata_energy_overhead_pct": 0.4371208852874675,
+        "classA_energy_saving_pct": 0.0,
+        "classA_budget_pct_before": 1.2610562137499997e-05,
+        "classA_budget_pct_after": 1.2610562137499997e-05,
+        "classA_mean_p": 1.0,
+        "classB_energy_saving_pct": 1.5959650371110468,
+        "classB_budget_pct_before": 0.0007592579708333334,
+        "classB_budget_pct_after": 0.0007471404790773545,
+        "classB_mean_p": 0.9842155413153582,
+        "classC_energy_saving_pct": 68.79485971194899,
+        "classC_budget_pct_before": 0.015805268198853615,
+        "classC_budget_pct_after": 0.004932056114354985,
+        "classC_mean_p": 0.3149930634907506,
+        "latency_round_s_after": 0.0228862
+      },
+      "spread": {
+        "n_min": 10,
+        "n_max": 3572,
+        "n_median": 474.0,
+        "sample_ratio": 357.2,
+        "latency_ratio": 164176.4705882353,
+        "energy_ratio": 6.113269865980077
+      }
+    }
+  },
+  "scale": [
+    {
+      "d": 41,
+      "comm_share": 0.9937670492597214,
+      "client_j": 546.0913605499999,
+      "bytes_mb": 0.82,
+      "classC_budget_pct": 0.015772439726631393,
+      "classC_runs_affordable": 6231.148941407849,
+      "classC_days_daily_retrain": 6231.148941407849,
+      "ras_saving_pct": 24.273681537059634,
+      "ras_classC_saving_pct": 66.69596766455842,
+      "metadata_overhead_pct_uplink": 9.75609756097561,
+      "metadata_energy_overhead_pct": 0.4371429713877495
+    },
+    {
+      "d": 5057,
+      "comm_share": 0.939590163058648,
+      "client_j": 6949.610007350001,
+      "bytes_mb": 101.14,
+      "classC_budget_pct": 0.5294066376102293,
+      "classC_runs_affordable": 177.47974995937975,
+      "classC_days_daily_retrain": 177.47974995937975,
+      "ras_saving_pct": 59.11024799733825,
+      "ras_classC_saving_pct": 67.40400001951461,
+      "metadata_overhead_pct_uplink": 0.07909827961241843,
+      "metadata_energy_overhead_pct": 0.03435012896371159
+    },
+    {
+      "d": 100000,
+      "comm_share": 0.935220507913017,
+      "client_j": 128155.60500000001,
+      "bytes_mb": 2000.0,
+      "classC_budget_pct": 10.251490299823633,
+      "classC_runs_affordable": 9.153673653170413,
+      "classC_days_daily_retrain": 9.153673653170413,
+      "ras_saving_pct": 61.920003089653996,
+      "ras_classC_saving_pct": 67.42461915242227,
+      "metadata_overhead_pct_uplink": 0.004,
+      "metadata_energy_overhead_pct": 0.00186273553934857
+    }
+  ],
+  "pareto_by_rho": {
+    "0.1": {
+      "rows": {
+        "FedAvg": {
+          "total_j": 547.5673605499999,
+          "acc_worst": 71.3,
+          "j_per_pp": 7.679766627629732,
+          "acc_per_kj": 130.21229009775757
+        },
+        "FLTrust": {
+          "total_j": 555.8693073369999,
+          "acc_worst": 77.3,
+          "j_per_pp": 7.191064777968951,
+          "acc_per_kj": 139.06146459195722
+        },
+        "Trimmed Mean": {
+          "total_j": 546.7063605499999,
+          "acc_worst": 92.1,
+          "j_per_pp": 5.936008257871878,
+          "acc_per_kj": 168.4633775018552
+        },
+        "AMFTA-ND": {
+          "total_j": 555.0498605499998,
+          "acc_worst": 90.9,
+          "j_per_pp": 6.106159081958194,
+          "acc_per_kj": 163.7690709622502
+        },
+        "AMFTA": {
+          "total_j": 556.3088631299998,
+          "acc_worst": 90.3,
+          "j_per_pp": 6.160674010299002,
+          "acc_per_kj": 162.31990173936603
+        },
+        "Krum": {
+          "total_j": 614.9713605499999,
+          "acc_worst": 89.7,
+          "j_per_pp": 6.855868010590857,
+          "acc_per_kj": 145.86045099689971
+        },
+        "FedDBC": {
+          "total_j": 549.9043605499999,
+          "acc_worst": 92.1,
+          "j_per_pp": 5.970731384907708,
+          "acc_per_kj": 167.48366917455243
+        }
+      },
+      "pareto": [
+        "Trimmed Mean"
+      ],
+      "pareto_gated": [
+        "Trimmed Mean"
+      ],
+      "admissible": [
+        "AMFTA",
+        "AMFTA-ND",
+        "FedDBC",
+        "Krum",
+        "Trimmed Mean"
+      ]
+    },
+    "0.2": {
+      "rows": {
+        "FedAvg": {
+          "total_j": 547.5673605499999,
+          "acc_worst": 40.8,
+          "j_per_pp": 13.420768640931371,
+          "acc_per_kj": 74.51138058889914
+        },
+        "FLTrust": {
+          "total_j": 555.8693073369999,
+          "acc_worst": 73.6,
+          "j_per_pp": 7.5525721105570645,
+          "acc_per_kj": 132.40522372533053
+        },
+        "Trimmed Mean": {
+          "total_j": 546.7063605499999,
+          "acc_worst": 57.0,
+          "j_per_pp": 9.591339658771927,
+          "acc_per_kj": 104.26072223241854
+        },
+        "AMFTA-ND": {
+          "total_j": 555.0498605499998,
+          "acc_worst": 90.6,
+          "j_per_pp": 6.126378151766003,
+          "acc_per_kj": 163.2285789788764
+        },
+        "AMFTA": {
+          "total_j": 556.3088631299998,
+          "acc_worst": 89.5,
+          "j_per_pp": 6.2157414874860315,
+          "acc_per_kj": 160.88185166858537
+        },
+        "Krum": {
+          "total_j": 614.9713605499999,
+          "acc_worst": 89.5,
+          "j_per_pp": 6.871188386033518,
+          "acc_per_kj": 145.53523260002814
+        },
+        "FedDBC": {
+          "total_j": 549.9043605499999,
+          "acc_worst": 85.6,
+          "j_per_pp": 6.424116361565419,
+          "acc_per_kj": 155.66343193639185
+        }
+      },
+      "pareto": [
+        "Trimmed Mean",
+        "FedDBC",
+        "AMFTA-ND"
+      ],
+      "pareto_gated": [
+        "FedDBC",
+        "AMFTA-ND"
+      ],
+      "admissible": [
+        "AMFTA",
+        "AMFTA-ND",
+        "FedDBC",
+        "Krum"
+      ]
+    },
+    "0.3": {
+      "rows": {
+        "FedAvg": {
+          "total_j": 547.5673605499999,
+          "acc_worst": 42.8,
+          "j_per_pp": 12.79362991939252,
+          "acc_per_kj": 78.16389924521772
+        },
+        "FLTrust": {
+          "total_j": 555.8693073369999,
+          "acc_worst": 70.3,
+          "j_per_pp": 7.907102522574679,
+          "acc_per_kj": 126.46857646590676
+        },
+        "Trimmed Mean": {
+          "total_j": 546.7063605499999,
+          "acc_worst": 41.5,
+          "j_per_pp": 13.173647242168672,
+          "acc_per_kj": 75.90912232711175
+        },
+        "AMFTA-ND": {
+          "total_j": 555.0498605499998,
+          "acc_worst": 90.6,
+          "j_per_pp": 6.126378151766003,
+          "acc_per_kj": 163.2285789788764
+        },
+        "AMFTA": {
+          "total_j": 556.3088631299998,
+          "acc_worst": 80.3,
+          "j_per_pp": 6.92788123449564,
+          "acc_per_kj": 144.34427585460787
+        },
+        "Krum": {
+          "total_j": 614.9713605499999,
+          "acc_worst": 87.3,
+          "j_per_pp": 7.0443454816723925,
+          "acc_per_kj": 141.95783023444085
+        },
+        "FedDBC": {
+          "total_j": 549.9043605499999,
+          "acc_worst": 65.3,
+          "j_per_pp": 8.421200008422662,
+          "acc_per_kj": 118.74792179259799
+        }
+      },
+      "pareto": [
+        "Trimmed Mean",
+        "FedAvg",
+        "FedDBC",
+        "AMFTA-ND"
+      ],
+      "pareto_gated": [
+        "AMFTA-ND"
+      ],
+      "admissible": [
+        "AMFTA-ND",
+        "Krum"
+      ]
+    }
+  },
+  "sensitivity": [
+    {
+      "knob": "e_bit",
+      "factor": 0.1,
+      "comm_share": 0.993220242286485,
+      "total_j": 502.04752054999994
+    },
+    {
+      "knob": "e_fix",
+      "factor": 0.1,
+      "comm_share": 0.9665367446141878,
+      "total_j": 101.71636055
+    },
+    {
+      "knob": "power",
+      "factor": 0.1,
+      "comm_share": 0.999373188730583,
+      "total_j": 543.027976055
+    },
+    {
+      "knob": "throughput",
+      "factor": 0.1,
+      "comm_share": 0.9409812417154708,
+      "total_j": 576.7252054999999
+    },
+    {
+      "knob": "e_bit",
+      "factor": 0.316,
+      "comm_share": 0.9933600453551651,
+      "total_j": 512.6180421500001
+    },
+    {
+      "knob": "e_fix",
+      "factor": 0.316,
+      "comm_share": 0.983664539031082,
+      "total_j": 208.36636055000002
+    },
+    {
+      "knob": "power",
+      "factor": 0.316,
+      "comm_share": 0.9980219544888723,
+      "total_j": 543.7631883338001
+    },
+    {
+      "knob": "throughput",
+      "factor": 0.316,
+      "comm_share": 0.9805380448063754,
+      "total_j": 553.4589941455696
+    },
+    {
+      "knob": "e_bit",
+      "factor": 1.0,
+      "comm_share": 0.9937670492597214,
+      "total_j": 546.0913605499999
+    },
+    {
+      "knob": "e_fix",
+      "factor": 1.0,
+      "comm_share": 0.9937670492597214,
+      "total_j": 546.0913605499999
+    },
+    {
+      "knob": "power",
+      "factor": 1.0,
+      "comm_share": 0.9937670492597214,
+      "total_j": 546.0913605499999
+    },
+    {
+      "knob": "throughput",
+      "factor": 1.0,
+      "comm_share": 0.9937670492597214,
+      "total_j": 546.0913605499999
+    },
+    {
+      "knob": "e_bit",
+      "factor": 3.16,
+      "comm_share": 0.9947778790615684,
+      "total_j": 651.7965765499999
+    },
+    {
+      "knob": "e_fix",
+      "factor": 3.16,
+      "comm_share": 0.9978892603338525,
+      "total_j": 1612.5913605499998
+    },
+    {
+      "knob": "power",
+      "factor": 3.16,
+      "comm_share": 0.9805655253665151,
+      "total_j": 553.4434833379999
+    },
+    {
+      "knob": "throughput",
+      "factor": 3.16,
+      "comm_share": 0.998019107646228,
+      "total_j": 543.7647394145571
+    },
+    {
+      "knob": "e_bit",
+      "factor": 10.0,
+      "comm_share": 0.9965497639441692,
+      "total_j": 986.5297605499998
+    },
+    {
+      "knob": "e_fix",
+      "factor": 10.0,
+      "comm_share": 0.9993178619711416,
+      "total_j": 4989.841360550002
+    },
+    {
+      "knob": "power",
+      "factor": 10.0,
+      "comm_share": 0.9409812417154708,
+      "total_j": 576.7252054999999
+    },
+    {
+      "knob": "throughput",
+      "factor": 10.0,
+      "comm_share": 0.999373188730583,
+      "total_j": 543.027976055
+    }
+  ]
+}

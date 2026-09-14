@@ -18,8 +18,8 @@ import numpy as np
 
 import resource_model as rm
 
-FIG = Path(__file__).parent.parent / "manuscript" / "figures"
-FIG.mkdir(exist_ok=True)
+FIG = Path(__file__).resolve().parent.parent / "figures"
+FIG.mkdir(parents=True, exist_ok=True)
 
 plt.rcParams.update({
     "font.size": 9,
