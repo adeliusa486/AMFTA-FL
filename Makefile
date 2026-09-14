@@ -11,11 +11,10 @@ BLACK      := black
 ISORT      := isort
 FLAKE8     := flake8
 UVICORN    := uvicorn
-SOURCES    := amfta/ training/ evaluation/ experiments/ api/ tests/
+SOURCES    := amfta/ training/ evaluation/ experiments/ tests/
 
 .PHONY: help install install-dev lint format test test-unit test-integration \
-        test-coverage api train preprocess partition smoke clean docker-build \
-        docker-up docker-down docs figures
+        test-coverage train preprocess partition smoke clean docs figures
 
 # ---------------------------------------------------------------------------
 # Help
@@ -115,42 +114,6 @@ figures:        ## Generate all figures from saved results
 	$(PYTHON) evaluation/visualize.py \
 	  --results_dir results \
 	  --output_dir figures
-
-# ---------------------------------------------------------------------------
-# API
-# ---------------------------------------------------------------------------
-api:            ## Start inference API (development mode)
-	$(UVICORN) api.main:app --host 0.0.0.0 --port 8000 --reload
-
-api-prod:       ## Start inference API (production mode, 4 workers)
-	$(UVICORN) api.main:app --host 0.0.0.0 --port 8000 --workers 4
-
-api-test:       ## Test running API with a sample prediction
-	curl -s -X POST http://localhost:8000/predict \
-	  -H "Content-Type: application/json" \
-	  -d '{"features": [0.1, 0.2, 0.3, 0.4, 0.5, 0.1, 0.2, 0.3, 0.4, 0.5, \
-	                    0.1, 0.2, 0.3, 0.4, 0.5, 0.1, 0.2, 0.3, 0.4, 0.5, \
-	                    0.1, 0.2, 0.3, 0.4, 0.5, 0.1, 0.2, 0.3, 0.4, 0.5, \
-	                    0.1, 0.2, 0.3, 0.4, 0.5, 0.1, 0.2, 0.3, 0.4, 0.5, \
-	                    0.1, 0.2, 0.3, 0.4, 0.5]}' | python -m json.tool
-
-# ---------------------------------------------------------------------------
-# Docker
-# ---------------------------------------------------------------------------
-docker-build:   ## Build Docker image
-	docker build -t amfta-fl:latest .
-
-docker-up:      ## Start all Docker services
-	docker-compose up -d
-
-docker-down:    ## Stop all Docker services
-	docker-compose down
-
-docker-test:    ## Run tests inside Docker
-	docker-compose run --rm amfta-test
-
-docker-train:   ## Run quick training inside Docker
-	docker-compose run --rm amfta-train
 
 # ---------------------------------------------------------------------------
 # Cleanup

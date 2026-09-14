@@ -1,4 +1,4 @@
-# Datasets — too large for git. scripts/setup_data.py fetches NF-TON-IoT.
+# Datasets: too large for git. scripts/setup_data.py fetches NF-TON-IoT.
 data/raw/
 data/processed/
 data/partitions/
@@ -9,14 +9,29 @@ data/splits/
 
 __pycache__/
 *.py[cod]
+.pytest_cache/
+.coverage
+htmlcov/
 .venv/
 venv/
 .env
 .ipynb_checkpoints/
+.DS_Store
+Thumbs.db
 results_paper/
 tables/
 *.aux
 *.log
 *.out
+*.fdb_latexmk
+*.fls
+*.synctex.gz
+*.bak*
+predictions.csv
 
 !data/README.md
+
+# Research manuscript and draft assets
+Paper/
+paper/
+[Pp]aper/
