@@ -7,7 +7,7 @@ Load a trained AMFTA global model checkpoint and classify network flows.
 Usage:
     # Single sample from CLI
     python scripts/inference.py --checkpoint checkpoints/amfta_best.pt \
-        --features 0.12 0.34 0.05 ... (45 values)
+        --features 0.12 0.34 0.05 ... (41 values)
 
     # From CSV file
     python scripts/inference.py --checkpoint checkpoints/amfta_best.pt \
@@ -30,16 +30,26 @@ sys.path.insert(0, str(Path(__file__).parent.parent))
 
 import numpy as np
 import torch
+import torch.nn as nn
 
 from amfta.models.local_mlp import LocalMLP
+from amfta.models.logistic import LogisticRegression
 from amfta.utils.logging_utils import setup_logging
 
 logger = logging.getLogger("amfta.inference")
 
 
-def load_model(checkpoint_path: str | None) -> LocalMLP:
+def load_model(
+    checkpoint_path: str | None,
+    model_type: str = "mlp",
+    input_dim: int = 41,
+) -> nn.Module:
     """Load model from checkpoint or return a fresh initialised model."""
-    model = LocalMLP()
+    if model_type == "logistic":
+        model = LogisticRegression(input_dim=input_dim)
+    else:
+        model = LocalMLP(input_dim=input_dim)
+
     if checkpoint_path and Path(checkpoint_path).exists():
         ckpt = torch.load(checkpoint_path, map_location="cpu")
         if "model_state" in ckpt:
@@ -49,8 +59,8 @@ def load_model(checkpoint_path: str | None) -> LocalMLP:
         logger.info("Model loaded from: %s", checkpoint_path)
     else:
         logger.warning(
-            "No checkpoint at '%s'. Using freshly initialised model.",
-            checkpoint_path
+            "No checkpoint at '%s'. Using freshly initialised %s model (input_dim=%d).",
+            checkpoint_path, model_type, input_dim,
         )
     model.eval()
     return model
@@ -94,7 +104,11 @@ def main():
     parser.add_argument("--output", type=str, default="results/predictions.csv",
                         help="Output CSV file for predictions")
     parser.add_argument("--features", type=float, nargs="+", default=None,
-                        help="Single sample: 45 feature values (min-max normalised)")
+                        help="Single sample: 41 feature values (min-max normalised)")
+    parser.add_argument("--model", type=str, default="mlp", choices=["mlp", "logistic"],
+                        help="Model architecture ('mlp' or 'logistic')")
+    parser.add_argument("--input_dim", type=int, default=41,
+                        help="Input feature dimension")
     parser.add_argument("--threshold", type=float, default=0.5,
                         help="Decision threshold for attack classification")
     parser.add_argument("--use_synthetic", action="store_true",
@@ -107,13 +121,14 @@ def main():
     setup_logging(args.log_level)
 
     # Load model
-    model = load_model(args.checkpoint)
+    model = load_model(args.checkpoint, model_type=args.model, input_dim=args.input_dim)
     logger.info("Model ready: %s", model)
 
     # ── Single sample from --features ──────────────────────────────────────
     if args.features is not None:
-        if len(args.features) != 45:
-            logger.error("Expected 45 features, got %d", len(args.features))
+        expected_dim = getattr(model, "input_dim", args.input_dim)
+        if len(args.features) != expected_dim:
+            logger.error("Expected %d features, got %d", expected_dim, len(args.features))
             sys.exit(1)
         x = np.array([args.features], dtype=np.float32)
         probs, preds = predict_batch(model, x, args.threshold)
@@ -126,7 +141,7 @@ def main():
     # ── Synthetic data ──────────────────────────────────────────────────────
     if args.use_synthetic:
         from amfta.data.partitioning import generate_synthetic_data
-        X, y_true = generate_synthetic_data(args.n_samples, n_features=45, seed=42)
+        X, y_true = generate_synthetic_data(args.n_samples, n_features=args.input_dim, seed=42)
         logger.info("Generated %d synthetic samples", len(X))
     elif args.input:
         import pandas as pd

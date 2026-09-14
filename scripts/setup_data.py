@@ -40,7 +40,7 @@ def verify_data():
     all_ok = True
     for path in required:
         exists = Path(path).exists()
-        status = "✓" if exists else "✗"
+        status = "OK" if exists else "MISSING"
         print(f"  [{status}] {path}")
         if not exists:
             all_ok = False
@@ -54,7 +54,7 @@ def create_synthetic_data(n_samples: int = 100_000, n_clients: int = 100, seed: 
     from amfta.data.partitioning import generate_synthetic_data, dirichlet_partition, save_partitions
 
     logger.info("Generating %d synthetic samples...", n_samples)
-    X, y = generate_synthetic_data(n_samples, n_features=45, seed=seed)
+    X, y = generate_synthetic_data(n_samples, n_features=41, seed=seed)
 
     # Split
     X_temp, X_test, y_temp, y_test = train_test_split(X, y, test_size=0.2, stratify=y, random_state=seed)
@@ -84,11 +84,13 @@ def create_synthetic_data(n_samples: int = 100_000, n_clients: int = 100, seed: 
         parts = dirichlet_partition(X_train, y_train, n_clients, alpha=0.5, seed=s)
         save_partitions(parts, Path("data/partitions"), seed=s)
 
-    logger.info("✓ Synthetic dataset ready. Run experiments with --use_synthetic flag.")
+    logger.info("Synthetic dataset ready. Run experiments with --use_synthetic flag.")
 
 
 def main():
     parser = argparse.ArgumentParser(description="AMFTA data setup utility")
+    parser.add_argument("--dataset", type=str, default=None,
+                        help="Dataset to process (e.g., 'nf-ton-iot' or 'synthetic')")
     parser.add_argument("--synthetic", action="store_true",
                         help="Generate synthetic data (no download required)")
     parser.add_argument("--n_samples", type=int, default=100_000)
@@ -96,7 +98,7 @@ def main():
     parser.add_argument("--verify", action="store_true",
                         help="Verify that processed data exists")
     parser.add_argument("--preprocess", action="store_true",
-                        help="Run full preprocessing on existing raw CSV")
+                        help="Run full preprocessing on existing raw CSV or parquet")
     parser.add_argument("--seed", type=int, default=42)
     args = parser.parse_args()
 
@@ -105,18 +107,23 @@ def main():
         ok = verify_data()
         sys.exit(0 if ok else 1)
 
-    if args.synthetic:
+    if args.synthetic or (args.dataset and args.dataset.lower() == "synthetic"):
         create_synthetic_data(args.n_samples, args.n_clients, args.seed)
         return
 
-    if args.preprocess:
-        if not Path("data/raw/NF-TON-IoT.csv").exists() and not Path("data/raw/NF-TON-IoT.parquet").exists() and not list(Path("data/raw").glob("*.parquet")):
+    run_preprocess = args.preprocess or (args.dataset and args.dataset.lower() in ("nf-ton-iot", "ton-iot", "ton_iot"))
+    if run_preprocess:
+        has_raw = (Path("data/raw/NF-TON-IoT.csv").exists() or
+                   Path("data/raw/NF-TON-IoT.parquet").exists() or
+                   list(Path("data/raw").glob("*.parquet")) or
+                   list(Path("data/raw").glob("*.csv")))
+        if not has_raw:
             print(f"\n  ERROR: Dataset not found in data/raw/")
             print(f"\n  To download TON_IoT dataset:")
             print(f"    1. Visit: {TON_IOT_URL}")
             print(f"    2. Download 'Network Flow (NF-TON-IoT)' variant")
             print(f"    3. Place NF-TON-IoT.csv or .parquet in data/raw/")
-            print(f"    4. Re-run: python scripts/setup_data.py --preprocess")
+            print(f"    4. Re-run: python scripts/setup_data.py --dataset nf-ton-iot")
             print(f"\n  Or use synthetic data: python scripts/setup_data.py --synthetic")
             sys.exit(1)
 
