@@ -79,11 +79,17 @@ class GaussianNoiseAttack(BaseAttack):
             effective_sigma = self.sigma * honest_norm_ref
 
         noise_update: Dict[str, torch.Tensor] = {}
+        generators: Dict[torch.device, torch.Generator] = {}
+
         for k, v in global_model.state_dict().items():
-            generator = torch.Generator(device=v.device)
-            if self.seed is not None:
-                generator.manual_seed(self.seed)
-            noise_update[k] = torch.randn(v.shape, generator=generator, device=v.device) * effective_sigma
+            if v.device not in generators:
+                gen = torch.Generator(device=v.device)
+                if self.seed is not None:
+                    gen.manual_seed(self.seed)
+                generators[v.device] = gen
+            else:
+                gen = generators[v.device]
+            noise_update[k] = torch.randn(v.shape, generator=gen, device=v.device) * effective_sigma
 
         return noise_update
 

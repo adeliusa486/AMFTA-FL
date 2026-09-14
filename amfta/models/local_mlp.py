@@ -31,7 +31,7 @@ class LocalMLP(nn.Module):
     Parameters
     ----------
     input_dim : int
-        Number of input features. Default 45 (TON_IoT network flow features).
+        Number of input features. Default 41 (NetFlow TON_IoT network flow features).
     hidden1 : int
         Size of first hidden layer. Default 64.
     hidden2 : int
@@ -182,7 +182,7 @@ def build_model(config: Optional[dict] = None) -> LocalMLP:
     """
     cfg = config or {}
     return LocalMLP(
-        input_dim=cfg.get("input_dim", 45),
+        input_dim=cfg.get("input_dim", 41),
         hidden1=cfg.get("hidden1", 64),
         hidden2=cfg.get("hidden2", 32),
         dropout=cfg.get("dropout", 0.0),
@@ -192,7 +192,7 @@ def build_model(config: Optional[dict] = None) -> LocalMLP:
 if __name__ == "__main__":
     model = build_model()
     print(model)
-    x = torch.randn(8, 45)
+    x = torch.randn(8, 41)
     out = model(x)
     print(f"Output shape : {out.shape}")
     print(f"Output range : [{out.min():.4f}, {out.max():.4f}]")

@@ -181,9 +181,10 @@ def aggregate_metrics(results: list[MetricsDict]) -> Dict[str, Tuple[float, floa
     if not results:
         return {}
     keys = results[0].keys()
+    ddof = 1 if len(results) > 1 else 0
     return {
         k: (float(np.mean([r[k] for r in results])),
-            float(np.std([r[k] for r in results])))
+            float(np.std([r[k] for r in results], ddof=ddof)))
         for k in keys
     }
 

@@ -314,13 +314,15 @@ def compute_contribution_quality(
     acc_full = _evaluate_with_update(all_ids)
 
     # --- Assign quality scores ---
+    expected_delta = 1.0 / len(all_ids) if len(all_ids) > 0 else 1.0
     for cid in all_ids:
         if cid in borderline_ids:
             remaining = [x for x in all_ids if x != cid]
             acc_without = _evaluate_with_update(remaining)
             delta = acc_full - acc_without
-            # Clip to [0, 1]: positive = helpful, negative → 0
-            quality[cid] = float(max(0.0, min(1.0, delta)))
+            # Rescale delta relative to expected single-client impact (1 / N_clients)
+            normalized_q = 0.5 + (delta / (2.0 * expected_delta))
+            quality[cid] = float(max(0.0, min(1.0, normalized_q)))
         elif cid in suspect_ids:
             quality[cid] = quality_default_suspect
         else:

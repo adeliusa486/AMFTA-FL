@@ -38,10 +38,11 @@ class LabelFlippingAttack(BaseAttack):
         Set < 1.0 for partial label flipping (more stealthy variant).
     """
 
-    def __init__(self, flip_fraction: float = 1.0) -> None:
+    def __init__(self, flip_fraction: float = 1.0, seed: int | None = None) -> None:
         if not 0.0 < flip_fraction <= 1.0:
             raise ValueError(f"flip_fraction must be in (0, 1]; got {flip_fraction}")
         self.flip_fraction = flip_fraction
+        self.seed = seed
 
     def get_update(
         self,
@@ -60,7 +61,13 @@ class LabelFlippingAttack(BaseAttack):
         if self.flip_fraction == 1.0:
             y_poisoned = 1.0 - y
         else:
-            mask = torch.rand(len(y)) < self.flip_fraction
+            if self.seed is not None:
+                gen = torch.Generator(device=y.device if y.is_cuda else "cpu")
+                gen.manual_seed(self.seed)
+                rand_vals = torch.rand(len(y), generator=gen, device=y.device)
+            else:
+                rand_vals = torch.rand(len(y), device=y.device)
+            mask = rand_vals < self.flip_fraction
             y_poisoned = y.clone()
             y_poisoned[mask] = 1.0 - y_poisoned[mask]
 

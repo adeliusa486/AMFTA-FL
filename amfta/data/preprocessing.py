@@ -138,10 +138,8 @@ def extract_features(df: pd.DataFrame) -> np.ndarray:
 
     logger.info("Feature matrix shape: %s  (columns: %d)", numeric_df.shape, numeric_df.shape[1])
 
-    # Fill NaN with column mean
-    X = numeric_df.fillna(numeric_df.mean()).values
-
-    return X, list(numeric_df.columns)
+    # Return numeric matrix without pre-split imputation to avoid data leakage
+    return numeric_df.values, list(numeric_df.columns)
 
 
 # ---------------------------------------------------------------------------
@@ -204,18 +202,12 @@ def preprocess(
             n_before, len(X), n_before - len(X),
         )
 
-    # ── 5. Min-Max Normalisation ───────────────────────────────────────────
-    scaler = MinMaxScaler()
-    X_scaled = scaler.fit_transform(X)
-    logger.info("Features normalised to [0, 1].")
-
-    # ── 6. Train / Val / Test Split ────────────────────────────────────────
-    # val_fraction from total = val_size = 0.10
-    # val_split_from_temp: val_size / (1 - test_size) = 0.10/0.80 = 0.125
+    # ── 5. Train / Val / Test Split ────────────────────────────────────────
+    # Perform split BEFORE normalisation or imputation to prevent test set leakage
     val_from_temp = val_size / (1.0 - test_size)
 
     X_temp, X_test, y_temp, y_test = train_test_split(
-        X_scaled, y, test_size=test_size, stratify=y, random_state=random_state
+        X, y, test_size=test_size, stratify=y, random_state=random_state
     )
     X_train, X_val, y_train, y_val = train_test_split(
         X_temp, y_temp, test_size=val_from_temp, stratify=y_temp, random_state=random_state
@@ -225,6 +217,23 @@ def preprocess(
         "Split — train: %d, val: %d, test: %d",
         len(X_train), len(X_val), len(X_test),
     )
+
+    # ── 6. Imputation and Min-Max Normalisation (Fitted on Train Split Only) ──
+    # Calculate column means from training split only
+    train_col_means = np.nanmean(X_train, axis=0)
+    train_col_means = np.nan_to_num(train_col_means, nan=0.0)
+
+    for split_arr in (X_train, X_val, X_test):
+        nan_mask = np.isnan(split_arr)
+        if np.any(nan_mask):
+            inds = np.where(nan_mask)
+            split_arr[inds] = np.take(train_col_means, inds[1])
+
+    scaler = MinMaxScaler()
+    X_train = scaler.fit_transform(X_train)
+    X_val = scaler.transform(X_val)
+    X_test = scaler.transform(X_test)
+    logger.info("Features normalised to [0, 1] strictly on training split.")
 
     # ── 7. Server Validation Buffer ────────────────────────────────────────
     rng = np.random.RandomState(random_state)

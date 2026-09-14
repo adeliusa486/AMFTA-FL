@@ -100,11 +100,11 @@ def dirichlet_partition(
     # Build client datasets
     client_data: ClientDataset = {}
     for cid in range(num_clients):
-        idxs = np.array(client_indices[cid])
+        idxs = np.array(client_indices[cid], dtype=np.int64)
         if len(idxs) < min_samples_per_client:
             # Pad by sampling with replacement from all data
             extra = rng.choice(len(X), size=min_samples_per_client - len(idxs), replace=True)
-            idxs = np.concatenate([idxs, extra])
+            idxs = np.concatenate([idxs, extra]).astype(np.int64)
 
         rng.shuffle(idxs)
         client_data[cid] = (X[idxs], y[idxs])
@@ -214,7 +214,7 @@ def load_partitions(
 
 def generate_synthetic_data(
     n_samples: int = 10_000,
-    n_features: int = 45,
+    n_features: int = 41,
     attack_fraction: float = 0.62,
     seed: int = 42,
 ) -> Tuple[np.ndarray, np.ndarray]:
@@ -226,7 +226,7 @@ def generate_synthetic_data(
     Parameters
     ----------
     n_samples       : int   Total samples to generate.
-    n_features      : int   Number of features (45 for TON_IoT).
+    n_features      : int   Number of features (41 for NetFlow TON_IoT).
     attack_fraction : float Class 1 (attack) proportion. Default 0.62.
     seed            : int   Random seed.
 
