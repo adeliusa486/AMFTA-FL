@@ -22,6 +22,7 @@ Blocks and the manuscript tables they produce
   extras       Coordinate-wise Median, Multi-Krum, FoolsGold at rho = 0.30
   normclip     NormClip-Only against AMFTA-ND, isolating norm rescaling
   alpha01      Severe heterogeneity, Dirichlet alpha = 0.1
+  amftas       AMFTA-S simulation: Table 21 in the manuscript
   scalability  Server aggregation wall-clock against client population
 
 Model class
@@ -52,7 +53,7 @@ logger = logging.getLogger(__name__)
 
 CORE = ["fedavg", "trimmed_mean", "krum", "fltrust", "feddbc", "amfta", "amfta_noq"]
 RHOS = [0.10, 0.20, 0.30, 0.40]
-FIELDS = ["block", "method", "attack", "rho", "alpha", "seed", "round",
+FIELDS = ["block", "method", "attack", "rho", "alpha", "spoof", "seed", "round",
           "accuracy", "f1", "precision", "recall"]
 
 
@@ -71,7 +72,7 @@ def load_done(path: Path) -> set:
     done = set()
     with path.open(newline="", encoding="utf8") as f:
         for r in csv.DictReader(f):
-            done.add((r["method"], r["attack"], r["rho"], r["alpha"], r["seed"]))
+            done.add((r["method"], r["attack"], r["rho"], r["alpha"], r.get("spoof", "0.00"), r["seed"]))
     return done
 
 
@@ -88,7 +89,13 @@ def append_rows(path: Path, rows: list) -> None:
 # One configuration
 # ---------------------------------------------------------------------------
 
-def run_one(block, method, attack, rho, alpha, seed, args) -> list:
+def run_one(block, method, attack, rho, alpha, seed, args, spoof=0.0, extra=None) -> list:
+    has_processed = Path("data/processed/train.npz").exists()
+    extra_dict = dict(extra or {})
+    if not has_processed and "use_synthetic" not in extra_dict:
+        extra_dict["use_synthetic"] = True
+        extra_dict["n_synthetic"] = 100_000
+
     cfg = RunConfig(
         method=method,
         model_class=args.model,
@@ -103,20 +110,22 @@ def run_one(block, method, attack, rho, alpha, seed, args) -> list:
         alpha_dirichlet=alpha,
         repartition=(abs(alpha - 0.5) > 1e-9),
         trim_fraction=max(rho, 0.01),   # Trimmed Mean receives the true rho
+        spoof_fraction=spoof,
         seed=seed,
-        results_dir=str(Path(args.out) / "_runs"),
+        results_dir=str(Path(args.out)) if Path(args.out).name == "results" else str(Path(args.out) / "_runs"),
         log_interval=args.rounds + 1,
+        **extra_dict,
     )
     t0 = time.time()
     history = FederatedRunner(cfg).run()
-    logger.info("  %s / %s / rho=%.2f / a=%.2f / seed %d  -> %.1fs",
-                method, attack, rho, alpha, seed, time.time() - t0)
+    logger.info("  %s / %s / rho=%.2f / a=%.2f / spoof=%.2f / seed %d  -> %.1fs",
+                method, attack, rho, alpha, spoof, seed, time.time() - t0)
 
     rows = []
     for h in history:
         rows.append({
             "block": block, "method": method, "attack": attack,
-            "rho": f"{rho:.2f}", "alpha": f"{alpha:.2f}", "seed": seed,
+            "rho": f"{rho:.2f}", "alpha": f"{alpha:.2f}", "spoof": f"{spoof:.2f}", "seed": seed,
             "round": h.get("round"),
             "accuracy": h.get("accuracy"), "f1": h.get("f1"),
             "precision": h.get("precision"), "recall": h.get("recall"),
@@ -125,21 +134,26 @@ def run_one(block, method, attack, rho, alpha, seed, args) -> list:
 
 
 def sweep(block, combos, args):
-    """combos: iterable of (method, attack, rho, alpha)."""
+    """combos: iterable of (method, attack, rho, alpha) or (method, attack, rho, alpha, spoof, extra)."""
     path = out_path(Path(args.out), block)
     done = set() if args.force else load_done(path)
     total = len(combos) * len(args.seeds)
     n = 0
-    for method, attack, rho, alpha in combos:
+    for item in combos:
+        if len(item) == 4:
+            method, attack, rho, alpha = item
+            spoof, extra = 0.0, None
+        else:
+            method, attack, rho, alpha, spoof, extra = item
         for seed in args.seeds:
             n += 1
-            key = (method, attack, f"{rho:.2f}", f"{alpha:.2f}", str(seed))
+            key = (method, attack, f"{rho:.2f}", f"{alpha:.2f}", f"{spoof:.2f}", str(seed))
             if key in done:
                 logger.info("[%d/%d] skip (done): %s", n, total, key)
                 continue
             logger.info("[%d/%d] %s", n, total, key)
             try:
-                append_rows(path, run_one(block, method, attack, rho, alpha, seed, args))
+                append_rows(path, run_one(block, method, attack, rho, alpha, seed, args, spoof=spoof, extra=extra))
             except Exception as e:
                 import traceback
                 logger.error("FAILED %s: %s\n%s", key, e, traceback.format_exc())
@@ -263,6 +277,20 @@ def block_scalability(args):
     logger.info("block 'scalability' -> %s  (accuracy column holds ms/round)", path)
 
 
+def block_amftas(args):
+    """AMFTA-S simulation: Table 21 in the manuscript.
+    Runs standard AMFTA-S (p_min=0.25, spoof=0.0) and AMFTA-S under resource spoofing
+    (spoof=0.50, spoof_factor=0.05) across rho in [0.10, 0.20, 0.30].
+    """
+    rhos = [0.10, 0.20, 0.30]
+    combos = [
+        ("amfta_s", "label_flipping", r, 0.5, 0.0, None) for r in rhos
+    ] + [
+        ("amfta_s", "label_flipping", r, 0.5, 0.5, {"spoof_factor": 0.05}) for r in rhos
+    ]
+    sweep("amftas", combos, args)
+
+
 BLOCKS = {
     "clean": block_clean,
     "labelflip": block_labelflip,
@@ -271,6 +299,7 @@ BLOCKS = {
     "extras": block_extras,
     "normclip": block_normclip,
     "alpha01": block_alpha01,
+    "amftas": block_amftas,
     "scalability": block_scalability,
 }
 
@@ -288,8 +317,8 @@ def main():
     ap.add_argument("--rounds", type=int, default=25)
     ap.add_argument("--local_epochs", type=int, default=5)
     ap.add_argument("--lr", type=float, default=0.01)
-    ap.add_argument("--batch_size", type=int, default=32)
-    ap.add_argument("--input_dim", type=int, default=45)
+    ap.add_argument("--batch_size", type=int, default=2048)
+    ap.add_argument("--input_dim", type=int, default=41)
     ap.add_argument("--timing_reps", type=int, default=5)
     ap.add_argument("--out", default="results_paper")
     ap.add_argument("--force", action="store_true")

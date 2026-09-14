@@ -446,6 +446,8 @@ class FederatedRunner:
         """
         cfg = self.cfg
         exp_name = f"{cfg.method}_byz{cfg.byzantine_fraction}_{cfg.attack_type}_seed{cfg.seed}"
+        if cfg.spoof_fraction > 0:
+            exp_name += f"_spoof{cfg.spoof_fraction:.2f}"
         history: List[Dict[str, Any]] = []
 
         with ExperimentLogger(exp_name, results_dir=Path(cfg.results_dir)) as exp_log:
@@ -520,10 +522,9 @@ class FederatedRunner:
                     agg_update = self.aggregator.aggregate(
                         self.global_model, updates, root_update=root_update
                     )
-                elif cfg.method in ("amfta", "amfta_noq"):
-                    # amfta_noq passes val_buffer but never reads it
-                    # (use_quality_eval=False) — the no-trusted-data ablation.
-                    vb = None if cfg.method == "amfta_noq" else self.val_buffer
+                elif cfg.method in ("amfta", "amfta_noq", "amfta_s"):
+                    # amfta_noq and amfta_s pass val_buffer=None (use_quality_eval=False)
+                    vb = None if cfg.method in ("amfta_noq", "amfta_s") else self.val_buffer
                     agg_update = self.aggregator.aggregate(
                         self.global_model, updates, val_buffer=vb
                     )
@@ -538,9 +539,9 @@ class FederatedRunner:
                     self.global_model, self.X_test, self.y_test, device=self.device
                 )
 
-                # Collect trust diagnostics (AMFTA only)
+                # Collect trust diagnostics (AMFTA and AMFTA-S)
                 diagnostics = {}
-                if cfg.method in ("amfta", "amfta_noq") and hasattr(self.aggregator, "_diagnostics"):
+                if cfg.method in ("amfta", "amfta_noq", "amfta_s") and hasattr(self.aggregator, "_diagnostics"):
                     if self.aggregator._diagnostics:
                         last_diag = self.aggregator._diagnostics[-1]
                         diagnostics = {
